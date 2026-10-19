@@ -32,7 +32,7 @@ All datasets in this directory are licensed under **[Creative Commons Attributio
 | File | Records | Format | Description & Canonical Interactive Tool |
 |---|---:|---|---|
 | `genai-2026-skills-index.json` / `.csv` | **466** | JSON, CSV | Complete hierarchical index of the **[GenAI 2026 Skills Atlas](https://www.skillsintelligence.tools/atlas/genai-2026)** across **15 domains** (`domain_id`, `domain`) and **86 consolidated multi-concept categories** (`category`), including skill types (`concept` / `tool`), directed `prerequisites` arrays, descriptions, and canonical URLs. |
-| `ai-glossary-index.json` / `.csv` | **400** | JSON, CSV | Canonical English index of the **[Skills Intelligence AI Glossary](https://www.skillsintelligence.tools/glossary)**, including term IDs, English categories (`Training`, `Safety`, `Agents`, `Regulation`, `LLMOps`, `Products`, `Culture`, `Debate`, `Karpathy`, `Other`), operational maturity ratings (`1–5`), first-seen dates, cross-referenced Atlas skill IDs, definitions, and canonical URLs. |
+| `ai-glossary-index.json` / `.csv` | **420** | JSON, CSV | Canonical English index of the **[Skills Intelligence AI Glossary](https://www.skillsintelligence.tools/glossary)**, including term IDs, English categories (`Training`, `Safety`, `Agents`, `Regulation`, `LLMOps`, `Products`, `Culture`, `Debate`, `Karpathy`, `Other`), operational maturity ratings (`1–5`), first-seen dates, cross-referenced Atlas skill IDs, definitions, and canonical URLs. |
 
 ---
 
@@ -41,7 +41,7 @@ All datasets in this directory are licensed under **[Creative Commons Attributio
 Explore the full interactive graphs, SVG concept maps, and methodology guides on the live platform:
 
 - **🗺️ [GenAI 2026 Skills Atlas (466 Skills Across 15 Domains & Prerequisite Graph)](https://www.skillsintelligence.tools/atlas/genai-2026)** — Interactive dependency tree showing what engineers must learn *before* each capability.
-- **📖 [AI Glossary & Concept Maps (400 Terms Rated by Maturity)](https://www.skillsintelligence.tools/glossary)** — Evidence-graded definitions separating production engineering signal from marketing hype.
+- **📖 [AI Glossary & Concept Maps (420 Terms Rated by Maturity)](https://www.skillsintelligence.tools/glossary)** — Evidence-graded definitions separating production engineering signal from marketing hype.
 - **🧭 [Skills Intelligence System Maps (21 Diagrams, 152 Concepts)](https://www.skillsintelligence.tools/skills-intelligence)** — Downloadable SVG concept maps showing how skill taxonomies, evidence models, and workforce decisions connect.
 - **📊 [AI Role Exposure & Task Decomposition (78 Roles)](https://www.skillsintelligence.tools/exposure)** — Task-level AI exposure and human-accountability boundaries across 78 roles and 9 work families, paired with the **[Role Dictionary](https://www.skillsintelligence.tools/roles)**.
 - **📡 [Skills Radar (47 Assessed Capabilities)](https://www.skillsintelligence.tools/radar)** — Evidence-led learning field guide and PDF report.

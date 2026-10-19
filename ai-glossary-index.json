@@ -3,7 +3,7 @@
   "publisher": "Skills Intelligence (https://www.skillsintelligence.tools)",
   "license": "CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/)",
   "version": "2026-06-26+editorial-glossary-2026-01",
-  "count": 400,
+  "count": 420,
   "glossary_url": "https://www.skillsintelligence.tools/glossary",
   "terms": [
     {
@@ -4751,6 +4751,313 @@
       "definition": "A Sakana AI method (Takuya Akiba et al.) for automatically merging the weights of multiple base models using evolutionary algorithms. It optimizes both in parameter space (weight combinations) and in data flow space (layer ordering), discovering combinations unreachable by hand. It enables the creation of new models without additional gradient-based training.",
       "related_skill_ids": [],
       "canonical_url": "https://www.skillsintelligence.tools/glossary/term/evolutionary-model-merging"
+    },
+    {
+      "id": "prefill-decode-disaggregation",
+      "term": "Prefill-Decode Disaggregation",
+      "category": "LLMOps",
+      "maturity": 3,
+      "first_seen": "2024-01-18",
+      "definition": "Prefill-decode disaggregation is an LLM inference serving architecture that separates the compute-bound prompt processing phase (prefill) from the memory-bandwidth-bound token generation phase (decode) onto distinct GPU pools. By isolating these phases and transferring the intermediate KV cache over high-speed interconnects, systems such as DistServe prevent long-prompt prefills from stalling ongoing token generation and allow each pool to be scaled and batched for its specific bottleneck. It is a cluster-level scheduling and placement architecture, not a single-node kernel optimization, and its net benefit depends on interconnect bandwidth and workload prompt-to-output ratios.",
+      "related_skill_ids": [
+        "llm-inference-serving",
+        "inference-optimization",
+        "gpu-acceleration",
+        "vllm"
+      ],
+      "canonical_url": "https://www.skillsintelligence.tools/glossary/term/prefill-decode-disaggregation"
+    },
+    {
+      "id": "paged-attention",
+      "term": "PagedAttention & Continuous Batching",
+      "category": "LLMOps",
+      "maturity": 4,
+      "first_seen": "2023-06-20",
+      "definition": "PagedAttention is a memory-management algorithm for LLM serving that partitions each request's key-value (KV) cache into fixed-size blocks stored in non-contiguous physical GPU memory, analogous to virtual memory paging in operating systems. Paired with iteration-level continuous batching—which inserts new requests and evicts finished ones at every decoding step rather than waiting for an entire static batch to complete—it eliminates internal and external memory fragmentation and enables fine-grained KV cache sharing across requests. It improves memory utilization and serving throughput, but it does not reduce the underlying algorithmic complexity of attention.",
+      "related_skill_ids": [
+        "vllm",
+        "llm-inference-serving",
+        "inference-optimization",
+        "kv-cache-optimization"
+      ],
+      "canonical_url": "https://www.skillsintelligence.tools/glossary/term/paged-attention"
+    },
+    {
+      "id": "late-interaction-retrieval",
+      "term": "Late Interaction & Multi-Vector Retrieval",
+      "category": "LLMOps",
+      "maturity": 3,
+      "first_seen": "2020-04-27",
+      "definition": "Late interaction is a neural retrieval paradigm, exemplified by ColBERT for text and ColPali for visually rich documents, that encodes queries and documents into matrices of token-level or image-patch vectors rather than compressing each passage into a single pooled embedding. Relevance is computed at query time via a lightweight maximum-similarity (MaxSim) operator that sums the best-matching document vector for every query vector. This preserves fine-grained lexical and layout signals that single-vector bi-encoders lose while remaining orders of magnitude faster than full cross-encoder reranking, though it increases index storage footprint and memory requirements.",
+      "related_skill_ids": [
+        "multimodal-rag",
+        "dense-retrieval",
+        "search-re-ranking",
+        "information-retrieval",
+        "multi-vector-retrieval"
+      ],
+      "canonical_url": "https://www.skillsintelligence.tools/glossary/term/late-interaction-retrieval"
+    },
+    {
+      "id": "contextual-retrieval-late-chunking",
+      "term": "Contextual Retrieval & Late Chunking",
+      "category": "LLMOps",
+      "maturity": 3,
+      "first_seen": "2024-09-19",
+      "definition": "Contextual retrieval and late chunking are document-ingestion techniques designed to preserve global document context when splitting text into retrieval chunks. Contextual retrieval prepends a concise, model-generated situating summary to each chunk before embedding and lexical indexing; late chunking applies a long-context embedding model to the entire document first and pools token representations into chunks only after full-document self-attention has occurred. Both methods mitigate out-of-context reference failures in standard RAG pipelines, but neither substitutes for query-time reranking or fixes downstream reasoning errors over retrieved passages.",
+      "related_skill_ids": [
+        "retrieval-augmented-generation",
+        "dense-retrieval",
+        "embedding-models",
+        "context-engineering",
+        "contextual-retrieval"
+      ],
+      "canonical_url": "https://www.skillsintelligence.tools/glossary/term/contextual-retrieval-late-chunking"
+    },
+    {
+      "id": "constrained-decoding",
+      "term": "Constrained Decoding (Grammar-Guided Generation)",
+      "category": "LLMOps",
+      "maturity": 4,
+      "first_seen": "2023-07-18",
+      "definition": "Constrained decoding is an inference-time technique that enforces formal structural rules—such as JSON schemas, regular expressions, or context-free grammars—by compiling the target specification into a finite-state machine or pushdown automaton that masks invalid token logits at every generation step. Engines such as Outlines and XGrammar precompute token-level transition masks so that the model can only sample syntactically valid continuations with minimal runtime overhead. It guarantees syntactic and schema adherence, but it does not guarantee semantic accuracy: a model can still emit a schema-valid object populated with hallucinated or logically inconsistent values.",
+      "related_skill_ids": [
+        "structured-llm-outputs",
+        "llm-inference-serving",
+        "llm-decoding-strategies",
+        "llm-function-calling"
+      ],
+      "canonical_url": "https://www.skillsintelligence.tools/glossary/term/constrained-decoding"
+    },
+    {
+      "id": "multi-lora-serving",
+      "term": "Multi-LoRA Serving",
+      "category": "LLMOps",
+      "maturity": 3,
+      "first_seen": "2023-10-30",
+      "definition": "Multi-LoRA serving is an inference architecture that hosts a single frozen base model in GPU memory while dynamically loading, batching, and executing dozens or hundreds of distinct Low-Rank Adaptation (LoRA) adapters across concurrent requests. Using specialized CUDA kernels (such as Segmented Gather Matrix-Vector Multiplication in Punica and S-LoRA) and unified paging for both KV caches and adapter weights, it allows multi-tenant customization at near-single-model memory cost. It solves the memory-duplication bottleneck of deploying separate fine-tuned models, though unmerged adapter routing still introduces measurable latency overhead compared with a single fused model.",
+      "related_skill_ids": [
+        "lora-qlora",
+        "llm-inference-serving",
+        "inference-optimization",
+        "hugging-face-peft",
+        "vllm"
+      ],
+      "canonical_url": "https://www.skillsintelligence.tools/glossary/term/multi-lora-serving"
+    },
+    {
+      "id": "matryoshka-embeddings",
+      "term": "Matryoshka Representation Learning (MRL)",
+      "category": "LLMOps",
+      "maturity": 4,
+      "first_seen": "2022-05-26",
+      "definition": "Matryoshka Representation Learning (MRL) is a training method for embedding models that optimizes nested loss functions across multiple prefix dimensions of the output vector (for example, the first 64, 128, 256, and 1024 dimensions simultaneously). Because coarse semantic information is concentrated in the earliest coordinates and finer details are added progressively, practitioners can truncate embeddings at deployment time or run fast low-dimensional shortlist retrieval followed by full-dimensional rescoring without retraining the model. MRL provides flexible storage-versus-recall trade-offs, but truncated vectors do not outperform native embeddings trained specifically for that target dimension.",
+      "related_skill_ids": [
+        "embedding-models",
+        "vector-indexing",
+        "vector-databases",
+        "information-retrieval",
+        "sentence-transformers"
+      ],
+      "canonical_url": "https://www.skillsintelligence.tools/glossary/term/matryoshka-embeddings"
+    },
+    {
+      "id": "multi-head-latent-attention",
+      "term": "Multi-Head Latent Attention (MLA)",
+      "category": "Training",
+      "maturity": 3,
+      "first_seen": "2024-05-06",
+      "definition": "Multi-Head Latent Attention (MLA) is an attention architecture, introduced in DeepSeek-V2, that compresses keys and values into a shared low-dimensional latent vector via down-projection before caching, and reconstructs per-head keys and values during attention computation. By caching only the compressed latent representation alongside a small decoupled rotary positional vector, MLA shrinks the KV cache footprint to levels comparable with or smaller than Grouped-Query Attention (GQA) while maintaining the modeling capacity of standard Multi-Head Attention. It is an architectural change requiring pretraining or upcycling, not a drop-in runtime quantization filter for existing checkpoints.",
+      "related_skill_ids": [
+        "transformer-architecture",
+        "inference-optimization",
+        "long-context-modeling",
+        "kv-cache-optimization"
+      ],
+      "canonical_url": "https://www.skillsintelligence.tools/glossary/term/multi-head-latent-attention"
+    },
+    {
+      "id": "overthinking-phenomenon",
+      "term": "Overthinking (in Reasoning Models)",
+      "category": "Training",
+      "maturity": 3,
+      "first_seen": "2025-01-20",
+      "definition": "Overthinking is a failure mode of reasoning-trained language models and agentic planners in which the model expends excessive intermediate tokens verifying trivial facts, second-guessing correct initial answers, or exploring redundant branches without improving final accuracy. Empirical benchmarks such as OckBench and inductive-reasoning studies show that unconstrained reasoning traces inflate latency and token cost and can actively degrade performance on pattern-recognition or constrained-planning tasks by amplifying early decomposition errors. It demonstrates that test-time compute scaling is not monotonically beneficial and requires explicit budget controls or length-penalized reinforcement learning.",
+      "related_skill_ids": [
+        "reasoning-models",
+        "test-time-compute-scaling",
+        "agentic-planning-task-decomposition",
+        "reinforcement-learning-from-verifiable-rewards"
+      ],
+      "canonical_url": "https://www.skillsintelligence.tools/glossary/term/overthinking-phenomenon"
+    },
+    {
+      "id": "byte-latent-transformer",
+      "term": "Byte Latent Transformer (BLT)",
+      "category": "Training",
+      "maturity": 2,
+      "first_seen": "2024-12-13",
+      "definition": "A Byte Latent Transformer (BLT) is a tokenizer-free language model architecture that processes raw UTF-8 bytes directly by dynamically grouping them into variable-length patches based on next-byte entropy rather than relying on a fixed vocabulary of subword tokens. Lightweight local byte encoders and decoders bridge raw bytes to a global latent transformer, allocating more compute and new patch boundaries wherever predictions are uncertain (such as complex morphology, code, or noisy text) and fewer steps over predictable spans. It eliminates vocabulary bottlenecks and tokenization artifacts, though it remains an emerging architecture rather than a replacement for standard BPE in most production models.",
+      "related_skill_ids": [
+        "transformer-architecture",
+        "large-language-models",
+        "model-training",
+        "tokenization"
+      ],
+      "canonical_url": "https://www.skillsintelligence.tools/glossary/term/byte-latent-transformer"
+    },
+    {
+      "id": "neural-long-term-memory",
+      "term": "Neural Long-Term Memory (Test-Time Memorization)",
+      "category": "Training",
+      "maturity": 2,
+      "first_seen": "2024-12-31",
+      "definition": "Neural long-term memory, introduced in architectures such as Google's Titans, is a differentiable memory module that learns to memorize historical context directly into fast-updating neural weights at inference time using gradient-based surprise signals. Unlike standard attention—which serves as accurate but quadratically costly short-term memory—or fixed linear recurrent states that overwrite older information, a neural memory module updates its parameters more strongly when encountering unexpected inputs and applies weight decay to forget stale data. It is a sequence-modeling architecture for multi-million-token contexts, not an external database or application-layer RAG store.",
+      "related_skill_ids": [
+        "long-context-modeling",
+        "agent-memory-systems",
+        "transformer-architecture",
+        "state-space-models"
+      ],
+      "canonical_url": "https://www.skillsintelligence.tools/glossary/term/neural-long-term-memory"
+    },
+    {
+      "id": "rubric-based-rl",
+      "term": "Rubric-Based Reinforcement Learning",
+      "category": "Training",
+      "maturity": 2,
+      "first_seen": "2025-03-15",
+      "definition": "Rubric-based reinforcement learning is a post-training paradigm that extends reinforcement learning beyond formally verifiable domains (such as math and code) to open-ended tasks by scoring model completions against prompt-specific, multi-criteria grading rubrics evaluated by a calibrated judge model. Instead of relying on a single opaque scalar reward model or a binary unit test, the training loop decomposes quality into explicit, auditable checklist items—such as factual grounding, constraint adherence, and tone—to reduce reward hacking and stylistic bias. Its reliability remains bounded by the construct validity of the generated rubrics and the calibration of the evaluator.",
+      "related_skill_ids": [
+        "reinforcement-learning",
+        "llm-as-judge",
+        "reward-modeling",
+        "reinforcement-learning-from-verifiable-rewards"
+      ],
+      "canonical_url": "https://www.skillsintelligence.tools/glossary/term/rubric-based-rl"
+    },
+    {
+      "id": "maestro-threat-modeling",
+      "term": "MAESTRO (Agent Threat Modeling Framework)",
+      "category": "Safety",
+      "maturity": 3,
+      "first_seen": "2025-02-06",
+      "definition": "MAESTRO (Multi-Agent Environment, Security, Threat, Risk, and Outcome) is a seven-layer threat-modeling framework developed by the Cloud Security Alliance specifically for agentic AI systems. Unlike traditional software frameworks such as STRIDE that focus on static component boundaries, MAESTRO maps cascading vulnerabilities across foundation models, data operations, agent frameworks, deployment infrastructure, evaluation, security controls, and multi-agent ecosystems—such as goal manipulation, tool misuse, and cross-agent delegation exploits. It provides a structured decomposition taxonomy for security reviews, but it does not by itself prove superior threat discovery over adapted STRIDE or empirical red-teaming.",
+      "related_skill_ids": [
+        "agent-threat-modeling-maestro",
+        "ai-risk-management",
+        "ai-red-teaming",
+        "owasp-top-10-for-llm-applications"
+      ],
+      "canonical_url": "https://www.skillsintelligence.tools/glossary/term/maestro-threat-modeling"
+    },
+    {
+      "id": "knowledge-poisoning",
+      "term": "Knowledge Poisoning (Corpus Poisoning / PoisonedRAG)",
+      "category": "Safety",
+      "maturity": 3,
+      "first_seen": "2024-02-12",
+      "definition": "Knowledge poisoning, also known as corpus poisoning or PoisonedRAG, is an adversarial attack in which an attacker injects a small number of crafted documents into an external retrieval database so that a Retrieval-Augmented Generation (RAG) system retrieves them for target queries and generates attacker-chosen answers. Unlike training-time data poisoning or direct prompt injection by the end user, knowledge poisoning compromises the grounding corpus itself and can bypass standard retrieval ranking and safety filters without modifying model weights. It demonstrates that grounding a model in retrieved documents does not inherently guarantee trustworthiness without provenance and access controls.",
+      "related_skill_ids": [
+        "secure-rag",
+        "ai-data-security",
+        "retrieval-augmented-generation",
+        "adversarial-ai-testing"
+      ],
+      "canonical_url": "https://www.skillsintelligence.tools/glossary/term/knowledge-poisoning"
+    },
+    {
+      "id": "machine-unlearning",
+      "term": "Machine Unlearning",
+      "category": "Safety",
+      "maturity": 3,
+      "first_seen": "2019-12-09",
+      "definition": "Machine unlearning is the collection of algorithmic methods designed to selectively remove the influence of specific training examples, personal data, copyrighted material, or hazardous capabilities from a trained model's weights without retraining the model from scratch. In large language models, approximate unlearning techniques—such as gradient ascent, representation misdirection, or targeted preference optimization—aim to make the model behave as if the target data were never seen. However, empirical audits show that many unlearning methods merely suppress surface outputs rather than erasing internal representations, leaving knowledge recoverable via adversarial probing or fine-tuning.",
+      "related_skill_ids": [
+        "ai-data-security",
+        "eu-ai-act-compliance",
+        "llm-fine-tuning",
+        "ai-risk-management"
+      ],
+      "canonical_url": "https://www.skillsintelligence.tools/glossary/term/machine-unlearning"
+    },
+    {
+      "id": "personal-attribute-inference",
+      "term": "Personal Attribute Inference (Inference Privacy Attacks)",
+      "category": "Safety",
+      "maturity": 3,
+      "first_seen": "2023-10-11",
+      "definition": "Personal attribute inference is a privacy attack in which a language model deduces sensitive, unstated user traits—such as location, age, gender, income, or health status—by correlating subtle lexical, stylistic, and contextual clues across a conversation or document. As demonstrated by ETH Zurich's Beyond Memorization research, frontier models can infer protected attributes at near-detective accuracy during ordinary interactions without extracting verbatim training data. This means that preventing training-data memorization and stripping explicit PII tags are insufficient on their own to guarantee user privacy in conversational and RAG applications.",
+      "related_skill_ids": [
+        "ai-data-security",
+        "ai-guardrails",
+        "ai-risk-management",
+        "pii-management",
+        "presidio"
+      ],
+      "canonical_url": "https://www.skillsintelligence.tools/glossary/term/personal-attribute-inference"
+    },
+    {
+      "id": "durable-execution-agents",
+      "term": "Durable Execution (for AI Agents)",
+      "category": "Agents",
+      "maturity": 3,
+      "first_seen": "2024-06-01",
+      "definition": "Durable execution is a systems-engineering pattern that persists every step, tool call, and state transition of an agentic workflow to an event log so that long-running processes can survive process crashes, network timeouts, or multi-day human-in-the-loop approval waits and resume exactly where they left off. Implemented via engines such as Temporal, Restate, or LangGraph checkpointing, it guarantees exactly-once or idempotent side-effect execution without re-running prior expensive LLM calls. It provides infrastructure-level fault tolerance and state recovery, but it does not prevent semantic planning errors or bad tool choices made by the model.",
+      "related_skill_ids": [
+        "multi-agent-coordination-patterns",
+        "ai-agent-design",
+        "agent-state-management",
+        "workflow-orchestration",
+        "langgraph"
+      ],
+      "canonical_url": "https://www.skillsintelligence.tools/glossary/term/durable-execution-agents"
+    },
+    {
+      "id": "dual-control-environment",
+      "term": "Dual-Control Evaluation Environment (tau-bench)",
+      "category": "Agents",
+      "maturity": 3,
+      "first_seen": "2024-06-17",
+      "definition": "A dual-control environment is an agent evaluation setup, formalized in benchmarks such as tau-bench and tau-squared-bench, in which both the AI agent and a simulated human user can actively invoke tools, modify shared world state, and exchange information across multi-turn interactions under domain policy constraints. By measuring consistency across repeated trials (via the pass^k metric) rather than single-shot accuracy, dual-control evaluations expose compounding state-tracking errors, policy violations, and user-coordination failures that static single-turn benchmarks miss. Passing a single trial in such an environment does not establish reliable production readiness.",
+      "related_skill_ids": [
+        "agent-evaluation",
+        "llm-testing",
+        "ai-agent-design",
+        "llm-benchmarking"
+      ],
+      "canonical_url": "https://www.skillsintelligence.tools/glossary/term/dual-control-environment"
+    },
+    {
+      "id": "metr-coding-slowdown",
+      "term": "METR Paradox (Verification Tax in AI Coding)",
+      "category": "Culture",
+      "maturity": 3,
+      "first_seen": "2025-07-10",
+      "definition": "The METR Paradox, also referred to as the AI coding verification tax, describes the empirical finding from METR's randomized controlled trial of experienced open-source maintainers that using frontier AI coding tools increased actual task completion time by 19%, even though participants believed before and after the study that AI had sped them up by roughly 20%. The slowdown stems from time spent prompting, waiting for generations, reviewing plausible-looking diffs, and repairing subtle architectural or context bugs in mature repositories. It challenges universal productivity-gain claims and separates subjective developer velocity from verified end-to-end delivery speed.",
+      "related_skill_ids": [
+        "ai-assisted-development",
+        "code-execution-agents",
+        "llm-testing",
+        "benchmark-analysis",
+        "software-testing"
+      ],
+      "canonical_url": "https://www.skillsintelligence.tools/glossary/term/metr-coding-slowdown"
+    },
+    {
+      "id": "skill-transcendence",
+      "term": "Skill Transcendence",
+      "category": "Debate",
+      "maturity": 2,
+      "first_seen": "2024-06-17",
+      "definition": "Skill transcendence is the phenomenon in which a generative model trained purely by imitation on data produced by sub-optimal, noisy, or boundedly rational experts achieves test-time performance that strictly exceeds any individual demonstrator in its training set. Formalized in studies of autoregressive sequence models playing chess or solving algorithmic tasks from low-rating human games, transcendence occurs when high-temperature training and low-temperature inference average out uncorrelated human errors and recombine complementary sub-skills across diverse demonstrators. It provides a mechanistic counterexample to simplistic 'stochastic parrot' ceilings, though it requires diversity across demonstrators rather than uniform bias.",
+      "related_skill_ids": [
+        "training-data-curation",
+        "large-language-models",
+        "model-training",
+        "deep-learning"
+      ],
+      "canonical_url": "https://www.skillsintelligence.tools/glossary/term/skill-transcendence"
     }
   ]
 }
