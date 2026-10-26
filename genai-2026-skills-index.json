@@ -3,7 +3,7 @@
   "publisher": "Skills Intelligence (https://www.skillsintelligence.tools)",
   "license": "CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/)",
   "version": "2026-10",
-  "count": 466,
+  "count": 467,
   "domains_count": 15,
   "atlas_url": "https://www.skillsintelligence.tools/atlas/genai-2026",
   "skills": [
@@ -3947,6 +3947,20 @@
         "prompt-injection-defense"
       ],
       "canonical_url": "https://www.skillsintelligence.tools/atlas/genai-2026/skill/ai-data-security"
+    },
+    {
+      "id": "agent-identity-access-management",
+      "name": "Agent Identity & Access Management",
+      "domain_id": "ai-safety-security-governance-ethics",
+      "domain": "AI Safety, Security, Governance & Ethics",
+      "category": "AI & LLM Application Security",
+      "type": "concept",
+      "description": "Agent identity and access management establishes which agent is acting, on whose behalf, and which resources it may use. The competence separates authentication of incoming requests from authorization of downstream tool calls, so delegated work stays within explicit, auditable permission boundaries.",
+      "prerequisites": [
+        "ai-data-security",
+        "api-development"
+      ],
+      "canonical_url": "https://www.skillsintelligence.tools/atlas/genai-2026/skill/agent-identity-access-management"
     },
     {
       "id": "ai-rate-limiting",
